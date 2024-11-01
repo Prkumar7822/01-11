@@ -1,0 +1,209 @@
+package medical;
+
+import java.util.Scanner;
+
+public class Receptionist {
+
+	public static void main(String[] args) throws mycustomException {
+		
+		int id=1;
+			
+		PatientManager obj=new PatientManager();
+		Scanner in=new Scanner(System.in);
+		while(true) {
+			System.out.println("menu");
+			
+			System.out.println("1.Add patient :");
+			
+			System.out.println("2.Balance enquiry :");
+			
+			System.out.println("3.patient enquiry :");
+			
+			System.out.println("Enter your option");
+			int choice = in.nextInt();
+			
+			
+			switch(choice) {
+			
+			case 1:{
+				obj.addPatient();
+				break;
+			}
+			case 2:{
+				obj.balanceEnquire();
+				break;
+			}
+			case 3:{
+				obj.payBills();
+				break;
+			}
+			
+			
+			
+			}
+			
+			
+		}
+		
+	}
+
+}
+
+
+
+
+
+
+
+package medical;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Map.Entry;
+
+public class PatientManager {
+    private Scanner in = new Scanner(System.in);
+    private Map<Integer, Data> patientRecords = new HashMap<>();
+    private int id = 1;
+
+    public void addPatient() {
+        System.out.println("Enter patient name:");
+        String patientName = in.nextLine();
+        System.out.println("Enter disease name:");
+        String disease = in.nextLine();
+        System.out.println("Enter amount due:");
+        int amount = in.nextInt();
+        in.nextLine(); 
+
+        patientRecords.put(id, new Data(patientName, disease, amount));
+        System.out.println("Patient added with ID: " + id);
+        id++;
+    }
+
+        public void balanceEnquire() throws mycustomException {
+        System.out.println("Enter patient full name:");
+        String pname = in.nextLine();
+        boolean found = false;
+
+        for (Data data : patientRecords.values()) {
+            if (data.getPname().equalsIgnoreCase(pname)) {
+                System.out.println("Name: " + data.getPname() + " | Disease: " + data.getDisease() + " | Balance Payment: " + data.getAmount());
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            throw new mycustomException("Patient not found");
+        }
+    }
+
+    public void payBills() {
+        System.out.println("Enter patient ID:");
+        int patientId = in.nextInt();
+        in.nextLine(); 
+        
+        Data data = patientRecords.get(patientId);
+        
+        if (data != null) {
+            System.out.println("Your balance is " + data.getAmount());
+            System.out.println("Pay by 'card' or 'cash':");
+            String paymentMethod = in.nextLine();
+            int due=data.getAmount();
+            if (paymentMethod.equalsIgnoreCase("card")) {
+                System.out.println("Enter card number:");
+                long cardNumber = in.nextLong();
+                System.out.println("Enter PIN:");
+                int pin = in.nextInt();
+                in.nextLine();  
+                
+                System.out.println("Payment successful!");
+                data.setAmount(0);  
+            } else if (paymentMethod.equalsIgnoreCase("cash")) {
+            	
+            	int givencas=in.nextInt();
+            	
+            	if(givencas==due) {
+                    System.out.println("Cash payment accepted. Payment successful!");
+                    data.setAmount(0); 
+
+            	}
+            	else if(givencas>due) {
+            		int change=givencas-due;
+            		System.out.println("Take your change "+change);
+            	}
+            	
+            } else {
+                System.out.println("Invalid payment method. Please try again.");
+            }
+        } else {
+            System.out.println("Patient ID not found.");
+        }
+    }
+}
+
+
+
+package medical;
+
+public class Data {
+	
+	private String Pname;
+	
+	private String disease;
+	private int amount;
+	public Data(String Pname,String disease,int amount) {
+		this.Pname=Pname;
+		this.disease=disease;
+		this.amount=amount;
+	}
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	public String getPname() {
+		return Pname;
+	}
+
+	public void setPname(String pname) {
+		Pname = pname;
+	}
+
+	public String getDisease() {
+		return disease;
+	}
+
+	public void setDisease(String disease) {
+		this.disease = disease;
+	}
+
+	@Override
+	public String toString() {
+		return "Data [Pname=" + Pname + ", disease=" + disease + ", getPname()=" + getPname() + ", getDisease()="
+				+ getDisease() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
+	}
+	
+	
+	
+
+}
+
+
+
+
+
+package medical;
+
+public class mycustomException extends Exception {
+	public mycustomException(String message) {
+        super(message);
+
+}
+}
